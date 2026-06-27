@@ -29,10 +29,11 @@ Classificare i dati prima di chiedere codice.
 
 | Campo | Stato | Motivo | Fonte |
 | --- | --- | --- | --- |
-| `titolo` | accettato | Campo obbligatorio inserito dall'utente per identificare il problema, senza titolo il ticket non e' interpretabile dall'operatore | contract |
-| `descrizione` | accettato | Campo obbligatorio inserito dall'utente per dettagliare il problema; senza descrizione l'operatore non ha contesto | contract |
-| `clienteId` | generato | Identifica il cliente che ha aperto il ticket; necessario per attribuire il ticket a un utente reale | contract |
-| `operatorId` | generato | Identifica l'operatore assegnato al ticket; necessario per l'assegnazione | contract |
+| `title` | accettato | Campo obbligatorio inserito dall'utente per identificare il problema; senza titolo il ticket non e' interpretabile dall'operatore | contract |
+| `description` | accettato | Campo obbligatorio inserito dall'utente per dettagliare il problema; senza descrizione l'operatore non ha contesto | contract |
+| `customer` | generato | Assegnato dal sistema con un default ("Support Direct") nel primo slice | decisione L08 |
+| `id` | generato | Identificativo univoco assegnato dal sistema al momento della creazione | inferenza |
+| `priority` | generato | Priorità di default assegnata dal sistema; necessaria per il rendering di TicketCard | inferenza |
 | `createdAt` | generato | Timestamp di creazione assegnato dal sistema al momento del salvataggio | inferenza |
 
 ## Mermaid Leggero
@@ -62,8 +63,8 @@ Campi mostrati nel diagramma:
 
 | Campo | Decisione | Motivo |
 | --- | --- | --- |
-| priority | respinto | Non richiesto dalla issue L05 ne' dal contract sketch; nessuna evidenza che serva nel primo slice |
+| operatorId | respinto | Non presente nel modello dati del server; non richiesto da issue ne' essenziale per creare ticket dal supporto |
 | area | respinto | Non richiesto dalla issue L05 ne' dal contract sketch; classificazione non prevista |
 | attachments | respinto | La issue L05 esplicitamente vieta di aggiungere campi al ticket (non-goal) |
-| owner | respinto | `clienteId` copre gia' la relazione di ownership del ticket |
+| owner | respinto | `customer` copre gia' la relazione di ownership del ticket |
 

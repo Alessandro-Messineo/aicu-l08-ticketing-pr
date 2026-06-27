@@ -31,9 +31,9 @@ Serve creare ticket dal supporto.
 
 | Superficie | Cosa riguarda | Nota |
 | --- | --- | --- |
-| UI | L'utente vede un form per la creazione del ticket con dei campi del tipo titolo, descrizione | [nota] |
+| UI | L'utente vede un form per la creazione del ticket con i campi title e description | |
 | API / azione | chiamata di tipo POST quando il form sarà inviato | [nota] |
-| Dati | id, description, user, operator| [nota] |
+| Dati | id, title, description, customer, priority | [nota] |
 | Verifica | verificare che il ticket venga creato correttamente e sia visibile nell'elenco dei ticket e contenga tutti i dati inseriti. | [nota] |
 
 ## Action
@@ -48,17 +48,15 @@ un utente compila i campi e invia il form e viene generato il ticket che sarà s
 
 ```json
 {
-    "titolo": "Problema di accesso", 
-    "descrizione": "L'utente non riesce ad accedere al portale.", 
-    "clienteId": "12345",
-    "operatorId": "111"
+    "title": "Problema di accesso",
+    "description": "L'utente non riesce ad accedere al portale."
 }
 ```
 
 Perche' e' valido:
 
-- contiene i campi minimi per leggere e capire il problema dell'utente
-- contiene i campi per riconoscere l'utente che l'ha creato e l'operatore a cui è stato assegnato
+- contiene i campi minimi per descrivere il problema dell'utente
+- `customer` e `priority` sono generati dal sistema e non servono nel payload
 
 ## Risposta Attesa Di Successo
 
@@ -68,63 +66,39 @@ Perche' e' valido:
 
 Campi attesi:
 
-- titolo confermato
-- descrizione confermata
-- clienteId generati
-- operatorId generati
+- title confermato
+- description confermato
+- id generato
+- customer generato
+- priority generato
+- createdAt generato
 
-## Payload Invalido 1
+## Payload Invalido
 
 ```json
 {
-    "titolo": "",
-    "descrizione": "",
-    "clienteId": "12345",
-    "operatorId": "111"
+    "title": "",
+    "description": ""
 }
 ```
 
 Motivo del rifiuto:
 
 ```txt
-campi titolo e descrizione sono stringhe vuote pertanto non è possibile risalire al problema dell'utente
+campi title e description sono stringhe vuote pertanto non è possibile risalire al problema dell'utente
 ```
 
 Risposta attesa:
 
 ```txt
-400 Bad Request — errore di validazione su titolo e descrizione
-```
-
-## Payload Invalido 2
-
-```json
-{
-    "titolo": "Problema di accesso", 
-    "descrizione": "L'utente non riesce ad accedere al portale.", 
-    "clienteId": "",
-    "operatorId": "111"
-}
-```
-
-Motivo del rifiuto:
-
-```txt
-clienteId è vuoto quindi non è possibile attribuite il ticket a un utente reale
-```
-
-Risposta attesa:
-
-```txt
-400 Bad Request — campo clienteId vuoto
+400 Bad Request — errore di validazione su title e description
 ```
 
 ## Error Model Minimo
 
 | Caso | Motivo | Risposta attesa |
 | --- | --- | --- |
-| Campo richiesto mancante o vuoto | Il ticket senza titolo o descrizione non e' interpretabile dall'operatore; senza clienteId o operatorId non e' attribuibile | 400 Bad Request — campi vuoti |
-| Valore fuori contratto | clienteId o operatorId non corrispondono a un record esistente nel db | 400-422|
+| Campo richiesto mancante o vuoto | Il ticket senza title o description non e' interpretabile dall'operatore | 400 Bad Request — campi vuoti |
 | Backend non raggiungibile o errore di rete | Il servizio backend non risponde (timeout, connection refused, DNS) — il ticket non puo' essere creato | Errore visibile all'utente (es. messaggio "Servizio non disponibile"), nessun crash, nessuno stato inconsistente |
 
 ## Non-Goals Confermati
